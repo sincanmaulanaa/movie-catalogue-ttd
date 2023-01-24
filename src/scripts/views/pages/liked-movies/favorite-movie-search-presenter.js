@@ -1,3 +1,6 @@
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable comma-dangle */
 class FavoriteMovieSearchPresenter {
   constructor({ favoriteMovies }) {
     this._listenToSearchRequestByUser();
@@ -14,6 +17,19 @@ class FavoriteMovieSearchPresenter {
   _searchMovies(latestQuery) {
     this._latestQuery = latestQuery;
     this._favoriteMovies.searchMovies(this._latestQuery);
+  }
+
+  _showFoundMovies(movies) {
+    const html = movies.reduce(
+      (carry, movie) =>
+        carry.concat(`
+      <li class="movie">
+        <span class="movie__title">${movie.title || '-'}</span>
+      </li>`),
+      ''
+    );
+
+    document.querySelector('.movies').innerHTML = html;
   }
 
   get latestQuery() {
