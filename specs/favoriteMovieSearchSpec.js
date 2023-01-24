@@ -3,7 +3,15 @@ import FavoriteMovieSearchPresenter from '../src/scripts/views/pages/liked-movie
 import FavoriteMovieIdb from '../src/scripts/data/favorite-movie-idb';
 
 describe('Searching movies', () => {
-  beforeEach(() => {
+  let presenter;
+
+  const searchMovies = (query) => {
+    const queryElement = document.getElementById('query');
+    queryElement.value = query;
+    queryElement.dispatchEvent(new Event('change'));
+  };
+
+  const setMovieSearchContainer = () => {
     document.body.innerHTML = `
 		<div id="movie-search-container">
 			<input id="query" type="text">
@@ -13,31 +21,27 @@ describe('Searching movies', () => {
 			</div>
 	  	</div>
 		`;
+  };
+
+  const constructPresenter = () => {
+    spyOn(FavoriteMovieIdb, 'searchMovies');
+    presenter = new FavoriteMovieSearchPresenter({
+      favoriteMovies: FavoriteMovieIdb,
+    });
+  };
+
+  beforeEach(() => {
+    setMovieSearchContainer();
+    constructPresenter();
   });
 
   it('Should be able to capture the query typed by the user', () => {
-    spyOn(FavoriteMovieIdb, 'searchMovies');
-    const presenter = new FavoriteMovieSearchPresenter({
-      favoriteMovies: FavoriteMovieIdb,
-    });
-
-    const queryElement = document.getElementById('query');
-    queryElement.value = 'film a';
-    queryElement.dispatchEvent(new Event('change'));
-
+    searchMovies('film a');
     expect(presenter.latestQuery).toEqual('film a');
   });
 
   it('Should ask the model to search for liked movies', () => {
-    spyOn(FavoriteMovieIdb, 'searchMovies');
-    const presenter = new FavoriteMovieSearchPresenter({
-      favoriteMovies: FavoriteMovieIdb,
-    });
-
-    const queryElement = document.getElementById('query');
-    queryElement.value = 'film a';
-    queryElement.dispatchEvent(new Event('change'));
-
+    searchMovies('film a');
     expect(FavoriteMovieIdb.searchMovies).toHaveBeenCalledWith('film a');
   });
 });
